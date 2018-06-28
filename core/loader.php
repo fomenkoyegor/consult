@@ -57,7 +57,9 @@ $router->addRoute(new Route("/categories/{id}",[
 $router->addRoute(new Route("auth/{action}",[
     "controller" => "auth"
 ]));
-
+$router->addRoute(new Route("api/{action}",[
+    "controller" => "api"
+]));
 // TODO api
 
 try {
