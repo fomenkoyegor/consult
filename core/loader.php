@@ -52,9 +52,13 @@ $router->addRoute(new Route("/categories/{id}",[
     "action" => "category"
 ]));
 
+// TODO api
 
+$router->addRoute(new Route("auth/{action}",[
+    "controller" => "auth"
+]));
 
-
+// TODO api
 
 try {
     $router->run();

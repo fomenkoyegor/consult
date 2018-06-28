@@ -53,7 +53,7 @@ class UserTokenSession
             "user_agent" => self::getAgent(),
             "user_ip" => self::getIp(),
             "user_id" => $id,
-            "token" => self::getToken($id),
+            "token" => $token,
             "expires" => $time + time(),
             "created" => time()
         ];
@@ -61,30 +61,30 @@ class UserTokenSession
         return $token;
     }
 
-    public function validateSession(): bool
+    public function validateSession(string $token): bool
     {
         if ($this->current_session !== null) return !empty($this->current_session);
-        if (empty($_COOKIE[self::SESSION_KEY])) return false;
+        if (empty($token)) return false;
         $this->current_session = \ModuleDatabaseConnection::instance()
             ->user_tokens
-            ->where("token", $_COOKIE[self::SESSION_KEY])
+            ->where("token", $token)
             ->first();
         if (empty($this->current_session)) return false;
         if ($this->current_session["user_ip"] !== self::getIp()) return false;
         if ($this->current_session["user_agent"] !== self::getAgent()) return false;
         if (time() > $this->current_session["expires"]) return false;
         if (time() > $this->current_session["expires"]
-            - ($this->current_session["expires"] - $this->current_session["created"]) / 2) $this->continueSession();
+            - ($this->current_session["expires"] - $this->current_session["created"]) / 2) $this->continueSession($token);
         return true;
     }
 
-    public function getUserIdFromSession(): int
+    public function getUserIdFromSession(string $token): int
     {
-        if (!$this->validateSession()) throw new \Exception("SESSION DOES NOT EXISTS");
+        if (!$this->validateSession($token)) throw new \Exception("SESSION DOES NOT EXISTS");
         return (int)$this->current_session["user_id"];
     }
 
-    private function _destroySession(bool $deep): bool
+    private function _destroySession(bool $deep)
     {
         if (!$deep) {
             \ModuleDatabaseConnection::instance()
@@ -93,24 +93,24 @@ class UserTokenSession
             \ModuleDatabaseConnection::instance()
                 ->user_tokens
                 ->deleteWhere("id=? AND expires<?", [$this->current_session['id'], time()]);
-            return setcookie(self::SESSION_KEY, "", time() - 1, URLROOT);
+
         } else {
             \ModuleDatabaseConnection::instance()
                 ->user_tokens
                 ->deleteWhere("user_id=?", [$this->current_session['user_id']]);
-            return setcookie(self::SESSION_KEY, "", time() - 1, URLROOT);
+
         }
     }
 
-    public function destroySession(bool $deep = false): bool
+    public function destroySession(string $token, bool $deep = false)
     {
-        if (!$this->validateSession()) return false;
-        return $this->_destroySession($deep);
+        if (!$this->validateSession($token)) return ;
+        $this->_destroySession($deep);
     }
 
-    public function continueSession(): bool
+    public function continueSession(string $token)
     {
-        if (!$this->validateSession()) return false;
+
         $id = (int)$this->current_session["id"];
         $time = $this->current_session["expires"] - $this->current_session["created"];
         \ModuleDatabaseConnection::instance()
@@ -119,6 +119,6 @@ class UserTokenSession
                 "expires" => time() + $time,
                 "created" => time()
             ]);
-        return setcookie(self::SESSION_KEY, $this->current_session["token"], time() + $time, URLROOT);
+
     }
 }

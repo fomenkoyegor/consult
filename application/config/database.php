@@ -4,5 +4,5 @@ return [
   "pass"=>"",
   "dbname"=>"arturapi",
   "charset"=>"utf8",
-  "host"=>"locallhost"
+  "host"=>"127.0.0.1"
 ];

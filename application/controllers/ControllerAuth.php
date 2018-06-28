@@ -1,13 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: asus
- * Date: 11.04.2018
- * Time: 13:30
- */
 
 class ControllerAuth extends Controller
 {
+    public function __construct()
+    {
+        header('Access-Control-Allow-Origin:*');
+    }
     private static function is_empty()
     {
         foreach (func_get_args() as $arg) {
@@ -19,48 +17,62 @@ class ControllerAuth extends Controller
     public function action_register()
     {
 
-        $errors = [];
+        $response = ['status'=>'ok'];
         try {
             $login = @$_POST["login"];
             $pass = @$_POST["pass"];
-            $pass_c = @$_POST["conf"];
-            $mail = @$_POST["mail"];
-            if (self::is_empty($login, $pass, $pass_c, $mail)) throw new Exception("enter all fields");
-            if ($pass_c !== $pass) throw new Exception("passwords are not similar");
+
+
+            if (self::is_empty($login, $pass)) throw new Exception("enter all fields");
+
             try {
-                ModuleAuth::instance()->register($login, $pass, ["email" => $mail]);
-                $this->redirect(URLROOT);
+                ModuleTokenAuth::instance()->register($login, $pass);
+
             } catch (Exception $e) {
                 throw new Exception("This login is already used");
             }
         } catch (Exception $e) {
-            $_SESSION["validate_error"] = $e->getMessage();
-            $_SESSION["old"] = [
-                "login" => @$_POST["login"],
-                "mail" => @$_POST["mail"]
-            ];
-            $this->redirect($_SERVER["HTTP_REFERER"]);
+
+            $response['status']='fail';
+            $response['message']=$e->getMessage();
         }
+        $this->response(json_encode([
+            'msg'=>$response
+        ]));
     }
 
     public function action_login()
     {
+        $response = ['status'=>'ok'];
         try {
             $login = @$_POST["login"];
             $pass = @$_POST["pass"];
-            $remember = isset($_POST["remember"]);
+
             if (empty($login) || empty($pass)) throw new Exception("incorect data");
-            ModuleAuth::instance()->login($login, $pass, $remember);
-            $this->redirect(URLROOT);
+            $response['token'] =  ModuleTokenAuth::instance()->login($login, $pass);
+
         } catch (Exception $e) {
-            $this->response($e->getMessage());
+            $response['status']='fail';
+            $response['message']=$e->getMessage();
         }
+        $this->response(json_encode($response));
     }
 
     public function action_logout()
     {
-        ModuleAuth::instance()->logout();
-        $this->redirect(URLROOT);
+        try {
+            $token = @$_POST["token"];
+
+
+            if (empty($token) ) throw new Exception("incorect data");
+            ModuleTokenAuth::instance()->logout($token);
+
+        } catch (Exception $e) {
+            $response['status']='fail';
+            $response['message']=$e->getMessage();
+        }
+
+        $this->response(json_encode($response));
     }
 
     public function action_logoutAll()
