@@ -61,7 +61,7 @@ class ControllerApi extends Controller
 
             if (empty($_POST['token'])
                 || !ModuleTokenAuth::instance()->isAuth($_POST['token']))
-                throw new Exception('auth fail');
+                throw new Exception('auth_fail');
             if (empty($_POST['time']))
                 throw new Exception('not all params');
             ModuleDatabaseConnection::instance()->consults->insert([
@@ -87,11 +87,11 @@ class ControllerApi extends Controller
 
             if (empty($_POST['token'])
                 || !ModuleTokenAuth::instance()->isAuth($_POST['token']))
-                throw new Exception('auth fail');
+                throw new Exception('auth_fail');
 
 
-            $user = (int) ModuleTokenAuth::instance()->getUser($_POST['token'])['id'];
-            $consults= ModuleDatabaseConnection::instance()
+            $user = (int)ModuleTokenAuth::instance()->getUser($_POST['token'])['id'];
+            $consults = ModuleDatabaseConnection::instance()
                 ->consults
                 ->where('user_id', $user)
                 ->andWhere('state', 0)
@@ -114,11 +114,11 @@ class ControllerApi extends Controller
 
             if (empty($_POST['token'])
                 || !ModuleTokenAuth::instance()->isAuth($_POST['token']))
-                throw new Exception('auth fail');
+                throw new Exception('auth_fail');
 
 
-            $user = (int) ModuleTokenAuth::instance()->getUser($_POST['token'])['id'];
-            $groups= ModuleDatabaseConnection::instance()
+            $user = (int)ModuleTokenAuth::instance()->getUser($_POST['token'])['id'];
+            $groups = ModuleDatabaseConnection::instance()
                 ->groups
                 ->all();
             $res['groups'] = $groups;
@@ -132,8 +132,100 @@ class ControllerApi extends Controller
     }
 
 
+    /**
+     *
+     */
+    public function action_addStudent()
+    {
+        $res = ['status' => 'ok'];
+        try {
+
+            if (empty($_POST['token'])
+                || !ModuleTokenAuth::instance()->isAuth($_POST['token']))
+                throw new Exception('auth_fail');
+            if (empty($_POST['name'])
+                || empty($_POST['surname'])
+                || empty($_POST['group_id'])
+                && empty($_POST['group_name']))
+                throw new Exception('fields_empty');
+            $db = ModuleDatabaseConnection::instance();
+
+            $user = ModuleTokenAuth::instance()->getUser($_POST['token']);
+
+            $consult = $db->consults
+                ->where("user_id", "?")
+                ->andWhere("state", 0)
+                ->first([$user["id"]]);
+
+            if (empty($consult)) throw new Exception('consult not open');
+
+            try {
+                $db->beginTran();
 
 
+                if (empty($_POST['group_id'])) {
+                    $group_id = $db->groups->insert(
+                        ['name' => $_POST['group_name']]
+                    );
+                } else {
+                    $group_id = $_POST['group_id'];
+                }
+
+                $student_id = $db->students->insert(
+                    [
+                        "name" => $_POST['name'],
+                        "surname" => $_POST['surname'],
+                        "group_id" => (int)$group_id
+                    ]
+                );
+
+                $db->visitors->insert([
+                    'consult_id' => (int)$consult['id'],
+                    'student_id' => (int)$student_id
+                ]);
+
+
+                $db->commit();
+            } catch (Exception $e) {
+                $db->rollback();
+                throw $e;
+            }
+
+
+        } catch (Exception $e) {
+            if ($e->getMessage() === 'auth_fail') {
+                $res = ['status' => 'auth_fail'];
+            } else {
+                $res = ['status' => 'fail'];
+            }
+
+            $res['msg'] = $e->getMessage();
+        }
+
+        $this->response(json_encode($res));
+    }
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

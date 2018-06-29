@@ -24,6 +24,22 @@ class ModuleDatabaseConnection
         $this->tables = $this->dbh->query("SHOW TABLES")->fetchAll(PDO::FETCH_COLUMN);
     }
 
+    public function beginTran()
+    {
+        $this->dbh->beginTransaction();
+    }
+
+    public function commit()
+    {
+        $this->dbh->commit();
+    }
+
+    public function rollback()
+    {
+        $this->dbh->rollBack();
+    }
+
+
     public function __get($name)
     {
         if(!in_array($name,$this->tables)) throw new Exception("Table not exist");
