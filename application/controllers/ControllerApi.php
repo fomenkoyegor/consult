@@ -131,6 +131,67 @@ class ControllerApi extends Controller
         $this->response(json_encode($res));
     }
 
+    public function action_getGroupStudent()
+    {
+        $res = ['status' => 'ok'];
+        try {
+
+            if (empty($_POST['token'])
+                || !ModuleTokenAuth::instance()->isAuth($_POST['token']))
+                throw new Exception('auth_fail');
+            if (empty((int)$_POST['group_id']))
+                throw new Exception('not all params');
+
+            $db = ModuleDatabaseConnection::instance();
+            $res['students'] = $db
+                ->students->where('group_id', '?')
+                ->all([$_POST['group_id']]);
+
+
+        } catch (Exception $e) {
+            $res = ['status' => 'fail'];
+            $res['msg'] = $e->getMessage();
+        }
+
+        $this->response(json_encode($res));
+    }
+
+    public function action_addExisttudent()
+    {
+        $res = ['status' => 'ok'];
+        try {
+
+            if (empty($_POST['token'])
+                || !ModuleTokenAuth::instance()->isAuth($_POST['token']))
+                throw new Exception('auth_fail');
+            if (empty((int)$_POST['student_id']))
+                throw new Exception('not all params');
+
+            $db = ModuleDatabaseConnection::instance();
+            $user = ModuleTokenAuth::instance()->getUser($_POST['token']);
+            $consult = $db->consults
+                ->where("user_id", "?")
+                ->andWhere("state", 0)
+                ->first([$user["id"]]);
+            if (empty($consult)) throw new Exception('consult not open');
+            $db->visitors->insert([
+                'consult_id' => (int)$consult['id'],
+                'student_id' => (int)$_POST['student_id']
+            ]);
+
+        } catch (Exception $e) {
+            if ($e->getMessage() === 'auth_fail') {
+                $res = ['status' => 'auth_fail'];
+            } else {
+                $res = ['status' => 'fail'];
+            }
+
+            $res['msg'] = $e->getMessage();
+        }
+
+        $this->response(json_encode($res));
+    }
+
 
     /**
      *
@@ -191,6 +252,49 @@ class ControllerApi extends Controller
                 throw $e;
             }
 
+
+        } catch (Exception $e) {
+            if ($e->getMessage() === 'auth_fail') {
+                $res = ['status' => 'auth_fail'];
+            } else {
+                $res = ['status' => 'fail'];
+            }
+
+            $res['msg'] = $e->getMessage();
+        }
+
+        $this->response(json_encode($res));
+    }
+
+
+    public function action_getStudentInConsult()
+    {
+        $res = ['status' => 'ok'];
+        try {
+
+            if (empty($_POST['token'])
+                || !ModuleTokenAuth::instance()->isAuth($_POST['token']))
+                throw new Exception('auth_fail');
+
+
+            $db = ModuleDatabaseConnection::instance();
+            $user = ModuleTokenAuth::instance()->getUser($_POST['token']);
+            $consult = $db->consults
+                ->where("user_id", "?")
+                ->andWhere("state", 0)
+                ->first([$user["id"]]);
+            if (empty($consult)) throw new Exception('consult not open');
+//            ################
+
+            $students = ModuleDatabaseConnection::instance()
+                ->students
+                ->join('visitors', 'student_id')
+                ->join('groups', 'id','group_id','students')
+                ->where('visitors.consult_id', (int)$consult['id'])
+                ->fields(['students.*',['groups.name','group']])
+                ->all();
+
+            $res['students'] = $students;
 
         } catch (Exception $e) {
             if ($e->getMessage() === 'auth_fail') {

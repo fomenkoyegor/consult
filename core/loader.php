@@ -15,42 +15,8 @@ $router->addRoute(new Route("",
         "controller" => "main",
         "action" => "index"
     ]));
-$router->addRoute(new Route("register",
-    [
-        "controller" => "main",
-        "action" => "register"
-    ]));
-$router->addRoute(new Route("regaction",
-    [
-        "controller" => "auth",
-        "action" => "register"
-    ]));
-$router->addRoute(new Route("logout",
-    [
-        "controller" => "auth",
-        "action" => "logout"
-    ]));
-$router->addRoute(new Route("login", [
-        "controller" => "auth",
-        "action" => "login"
-    ]));
 
-$router->addRoute(new Route("home/posts",[
-        "controller" => "home",
-        "action" => "myposts"
-]));
-$router->addRoute(new Route("/home/addpost",[
-        "controller" => "home",
-        "action" => "addpost"
-]));
-$router->addRoute(new Route("/home/addpostaction",[
-        "controller" => "home",
-        "action" => "addpostaction"
-]));
-$router->addRoute(new Route("/categories/{id}",[
-    "controller" => "category",
-    "action" => "category"
-]));
+
 
 // TODO api
 

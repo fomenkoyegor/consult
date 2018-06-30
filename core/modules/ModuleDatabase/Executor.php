@@ -159,7 +159,7 @@ class Executor
         $this->_execute($query, $data);
     }
 
-    public function countOfWhere(string $where = "1", array $data = []):?int
+    public function countOfWhere(string $where = "1", array $data = []): ?int
     {
         return (int)$this->_execute("SELECT COUNT(*) FROM `{$this->table}` WHERE {$where}", $data)->fetchColumn();
     }
@@ -258,16 +258,23 @@ class Executor
     public function fields(array $table_fields): self
     {
         $this->components["fields"] = array_map(function ($field) {
-            return $this->_toString($field);
+
+            return
+                is_array($field)?
+                    $this->_toString($field[0])." AS `".$field[1].'`':
+                    $this->_toString($field);
+//            return $this->_toString($field);
+
         }, $table_fields);
         return $this;
     }
+
 //    ["ff.name","user_role.name"]
 
-    public function all(array $params = []):array
+    public function all(array $params = []): array
     {
         $result = $this->_execute($this->_select(), $params)->fetchAll();
-        return $result?$result:[];
+        return $result ? $result : [];
     }
 
     public function first(array $params = [])
