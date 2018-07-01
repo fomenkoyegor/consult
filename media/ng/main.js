@@ -105,6 +105,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _home_history_history_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./home/history/history.component */ "./src/app/home/history/history.component.ts");
 /* harmony import */ var _loader_loader_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./loader/loader.component */ "./src/app/loader/loader.component.ts");
 /* harmony import */ var _home_consult_add_student_add_student_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./home/consult/add-student/add-student.component */ "./src/app/home/consult/add-student/add-student.component.ts");
+/* harmony import */ var _servises_auth_service__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./servises/auth.service */ "./src/app/servises/auth.service.ts");
+/* harmony import */ var _servises_no_auth_guard__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./servises/no-auth.guard */ "./src/app/servises/no-auth.guard.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -125,13 +127,15 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 
 
+
+
 var homeChildren = [
     { path: '', component: _home_consult_consult_component__WEBPACK_IMPORTED_MODULE_10__["ConsultComponent"] },
     { path: 'history', component: _home_history_history_component__WEBPACK_IMPORTED_MODULE_11__["HistoryComponent"] },
 ];
 var routes = [
     { path: '', component: _home_home_component__WEBPACK_IMPORTED_MODULE_6__["HomeComponent"], canActivate: [_servises_auth_guard__WEBPACK_IMPORTED_MODULE_7__["AuthGuard"]], children: homeChildren },
-    { path: 'auth', component: _auth_auth_component__WEBPACK_IMPORTED_MODULE_5__["AuthComponent"] },
+    { path: 'auth', component: _auth_auth_component__WEBPACK_IMPORTED_MODULE_5__["AuthComponent"], canActivate: [_servises_no_auth_guard__WEBPACK_IMPORTED_MODULE_15__["NoAuthGuard"]] },
 ];
 var AppModule = /** @class */ (function () {
     function AppModule() {
@@ -154,7 +158,7 @@ var AppModule = /** @class */ (function () {
                 _angular_router__WEBPACK_IMPORTED_MODULE_3__["RouterModule"].forRoot(routes),
                 _angular_common_http__WEBPACK_IMPORTED_MODULE_8__["HttpClientModule"]
             ],
-            providers: [],
+            providers: [_servises_auth_guard__WEBPACK_IMPORTED_MODULE_7__["AuthGuard"], _servises_no_auth_guard__WEBPACK_IMPORTED_MODULE_15__["NoAuthGuard"], _servises_auth_service__WEBPACK_IMPORTED_MODULE_14__["AuthService"]],
             bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_4__["AppComponent"]]
         })
     ], AppModule);
@@ -243,7 +247,6 @@ var AuthComponent = /** @class */ (function () {
         this.auth.login(this.formData.login, this.formData.pass)
             .subscribe(function (res) {
             if (res) {
-                alert('succes');
                 _this.router.navigate(['']);
             }
             else {
@@ -273,7 +276,7 @@ var AuthComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"bg\" (click)=\"closeWindow()\">\n    <div class=\"form\" (click)=\"$event.stopPropagation()\">\n        <div class=\"btns\">\n            <div class=\"btn\" [class.active]=\"old\" (click)=\"old=true\">Select</div>\n            <div class=\"btn\" [class.active]=\"!old\" (click)=\"old=false\">Add new</div>\n        </div>\n        <div class=\"data\" *ngIf=\"old\">\n\n            <div class=\"form-group\">\n                <h3 class=\"form-control\">Select group</h3>\n                <select class=\"form-control\" [(ngModel)]=\"selectedGroupId\">\n                    <option *ngFor=\"let group of groups\" value=\"{{group.id}}\">{{group.name}}</option>\n                </select>\n            </div>\n\n            <div class=\"form-group\">\n                <h3 class=\"form-control\">Select student</h3>\n                <select class=\"form-control\" [(ngModel)]=\"selectedStudentId\">\n                    <option *ngFor=\"let student of students\" value=\"{{student.id}}\">\n                        {{student.name}} {{student.surname}}\n                    </option>\n                </select>\n            </div>\n\n            <div class=\"form-group\">\n                <div class=\"btn\">add</div>\n            </div>\n\n        </div>\n        <div class=\"data\" *ngIf=\"!old\">\n\n            <div class=\"form-group\">\n                <input type=\"checkbox\" [(ngModel)]=\"newGroup\" id=\"chose\">\n                <label for=\"chose\">\n                    <span class=\"info form-control\" *ngIf=\"!newGroup\">add new group</span>\n                    <span class=\"info form-control\" *ngIf=\"newGroup\">select old group</span>\n                </label>\n\n\n\n            </div>\n\n            <div class=\"form-group\" *ngIf=\"!newGroup\">\n                <h3 class=\"form-control\">Select group</h3>\n                <select class=\"form-control\" [(ngModel)]=\"selectedGroupId\">\n                    <option *ngFor=\"let group of groups\" value=\"{{group.id}}\">{{group.name}}</option>\n                </select>\n            </div>\n\n            <div class=\"form-group\" *ngIf=\"newGroup\">\n                <h3 class=\"form-control\">Name of group</h3>\n                <input type=\"text\" class=\"form-control\" placeholder=\"group name\" [(ngModel)]=\"newGroupName\">\n            </div>\n\n            <div class=\"form-group\">\n                <h3 class=\"form-control\">Name of student</h3>\n                <input type=\"text\" class=\"form-control\" placeholder=\"new student name\"  [(ngModel)]=\"newStudentData.name\">\n            </div>\n\n            <div class=\"form-group\">\n                <h3 class=\"form-control\">Surname of student</h3>\n                <input type=\"text\" class=\"form-control\" placeholder=\"new student surname\" [(ngModel)]=\"newStudentData.surname\">\n            </div>\n\n            <div class=\"form-group\">\n                <div class=\"btn\" (click)=\"onAddNewStudent()\">add</div>\n            </div>\n\n        </div>\n    </div>\n</div>\n"
+module.exports = "<div class=\"bg\" (click)=\"closeWindow()\">\n    <div class=\"form\" (click)=\"$event.stopPropagation()\">\n        <div class=\"btns\">\n            <div class=\"btn\" [class.active]=\"old\" (click)=\"old=true\">Select</div>\n            <div class=\"btn\" [class.active]=\"!old\" (click)=\"old=false\">Add new</div>\n        </div>\n        <div class=\"data\" *ngIf=\"old\">\n\n            <div class=\"form-group\">\n                <h3 class=\"form-control\">Select group</h3>\n                <select class=\"form-control\" [(ngModel)]=\"selectedGroupId\" (ngModelChange)=\"onGroupChange()\">\n                    <option *ngFor=\"let group of groups\" value=\"{{group.id}}\">{{group.name}}</option>\n                </select>\n            </div>\n\n            <div class=\"form-group\">\n                <h3 class=\"form-control\">Select student</h3>\n                <select class=\"form-control\" [(ngModel)]=\"selectedStudentId\">\n                    <option *ngFor=\"let student of students\" value=\"{{student.id}}\">\n                        {{student.name}} {{student.surname}}\n                    </option>\n                </select>\n            </div>\n\n            <div class=\"form-group\">\n                <div class=\"btn\" (click)=\"onAddExistStudent()\">add</div>\n            </div>\n\n        </div>\n        <div class=\"data\" *ngIf=\"!old\">\n\n            <div class=\"form-group\">\n                <input type=\"checkbox\" [(ngModel)]=\"newGroup\" id=\"chose\">\n                <label for=\"chose\">\n                    <span class=\"info form-control\" *ngIf=\"!newGroup\">add new group</span>\n                    <span class=\"info form-control\" *ngIf=\"newGroup\">select old group</span>\n                </label>\n\n\n\n            </div>\n\n            <div class=\"form-group\" *ngIf=\"!newGroup\">\n                <h3 class=\"form-control\">Select group</h3>\n                <select class=\"form-control\" [(ngModel)]=\"selectedGroupId\" (ngModelChange)=\"onGroupChange()\">\n                    <option *ngFor=\"let group of groups\" value=\"{{group.id}}\">{{group.name}}</option>\n                </select>\n            </div>\n\n            <div class=\"form-group\" *ngIf=\"newGroup\">\n                <h3 class=\"form-control\">Name of group</h3>\n                <input type=\"text\" class=\"form-control\" placeholder=\"group name\" [(ngModel)]=\"newGroupName\">\n            </div>\n\n            <div class=\"form-group\">\n                <h3 class=\"form-control\">Name of student</h3>\n                <input type=\"text\" class=\"form-control\" placeholder=\"new student name\"  [(ngModel)]=\"newStudentData.name\">\n            </div>\n\n            <div class=\"form-group\">\n                <h3 class=\"form-control\">Surname of student</h3>\n                <input type=\"text\" class=\"form-control\" placeholder=\"new student surname\" [(ngModel)]=\"newStudentData.surname\">\n            </div>\n\n            <div class=\"form-group\">\n                <div class=\"btn\" (click)=\"onAddNewStudent()\">add</div>\n            </div>\n\n        </div>\n    </div>\n</div>\n"
 
 /***/ }),
 
@@ -284,7 +287,7 @@ module.exports = "<div class=\"bg\" (click)=\"closeWindow()\">\n    <div class=\
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".bg {\n  position: fixed;\n  left: 0;\n  right: 0;\n  top: 0;\n  bottom: 0;\n  background: rgba(120, 2, 6, 0.58);\n  /* fallback for old browsers */\n  /* Chrome 10-25, Safari 5.1-6 */\n  background: linear-gradient(to right, rgba(6, 17, 97, 0.64), rgba(120, 2, 6, 0.58));\n  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */\n  overflow-y: scroll; }\n  .bg .form {\n    width: 65%;\n    margin: 5% auto;\n    padding: .4em;\n    border-radius: .1em;\n    background: #304352;\n    /* fallback for old browsers */\n    /* Chrome 10-25, Safari 5.1-6 */\n    background: linear-gradient(to right, #d7d2cc, #304352);\n    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */\n    box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75); }\n  .bg .form .btns {\n      display: flex;\n      padding-bottom: .1em; }\n  .bg .form .btns .btn {\n        flex-grow: 1;\n        text-align: center;\n        border-radius: .1em; }\n  .bg .form .btns .btn.active {\n          background: rgba(0, 0, 0, 0.4);\n          box-shadow: inset 63px -49px 174px -37px rgba(21, 152, 255, 0.5); }\n  .bg .form .data {\n      width: 100%;\n      border-radius: .1em;\n      background: rgba(0, 0, 0, 0.4);\n      box-shadow: inset 63px -49px 174px -37px rgba(21, 152, 255, 0.5);\n      -webkit-animation: showAddBlock ease 1s;\n              animation: showAddBlock ease 1s; }\n  .bg .form .data .form-group {\n        padding: .9em;\n        -webkit-animation: showAddBlock ease .5s;\n                animation: showAddBlock ease .5s; }\n  .bg .form .data .form-group select, .bg .form .data .form-group input {\n          background: transparent; }\n  .bg .form .data .form-group h3 {\n          color: aliceblue; }\n  .bg .form .data .form-group .form-control {\n          width: 100%;\n          padding: .6em; }\n  .bg .form .data .form-group .form-control::-webkit-input-placeholder {\n            color: black; }\n  .bg .form .data .form-group .btn {\n          background: rgba(0, 0, 0, 0.4);\n          box-shadow: inset 63px -49px 174px -37px rgba(21, 152, 255, 0.5); }\n  .bg .form .data .form-group .btn:hover {\n          background: rgba(0, 0, 0, 0.9);\n          box-shadow: inset 63px -49px 174px -37px rgba(21, 152, 255, 0.3); }\n  .bg .form .data .form-group .info {\n          text-transform: uppercase;\n          color: aliceblue;\n          -webkit-animation: showAddBlock ease .5s;\n                  animation: showAddBlock ease .5s;\n          cursor: pointer; }\n  @-webkit-keyframes showAddBlock {\n  from {\n    opacity: 0;\n    -webkit-transform: scale(0.8);\n            transform: scale(0.8); }\n  to {\n    opacity: 1;\n    -webkit-transform: scale(1);\n            transform: scale(1); } }\n  @keyframes showAddBlock {\n  from {\n    opacity: 0;\n    -webkit-transform: scale(0.8);\n            transform: scale(0.8); }\n  to {\n    opacity: 1;\n    -webkit-transform: scale(1);\n            transform: scale(1); } }\n"
+module.exports = ".bg {\n  position: fixed;\n  left: 0;\n  right: 0;\n  top: 0;\n  bottom: 0;\n  background: rgba(142, 14, 0, 0.81);\n  /* fallback for old browsers */\n  /* Chrome 10-25, Safari 5.1-6 */\n  background: linear-gradient(to right, rgba(31, 28, 24, 0.8), rgba(142, 14, 0, 0.81));\n  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */\n  overflow-y: scroll; }\n  .bg .form {\n    width: 65%;\n    margin: 5% auto;\n    padding: .4em;\n    border-radius: .4em;\n    background: rgba(20, 30, 48, 0.95);\n    /* fallback for old browsers */\n    /* Chrome 10-25, Safari 5.1-6 */\n    background: linear-gradient(to right, rgba(36, 59, 85, 0.77), rgba(20, 30, 48, 0.67));\n    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */\n    box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75); }\n  .bg .form .btns {\n      display: flex;\n      padding-bottom: .1em; }\n  .bg .form .btns .btn {\n        flex-grow: 1;\n        text-align: center;\n        border-radius: .1em;\n        background: rgba(125, 132, 135, 0.78);\n        color: transparent; }\n  .bg .form .btns .btn:hover {\n          color: wheat; }\n  .bg .form .btns .btn.active {\n          background: rgba(0, 0, 0, 0.6);\n          color: wheat;\n          box-shadow: inset 63px -49px 174px -37px rgba(21, 152, 255, 0.5); }\n  .bg .form .data {\n      width: 100%;\n      border-radius: .1em;\n      background: rgba(0, 0, 0, 0.4);\n      box-shadow: inset 63px -49px 174px -37px rgba(21, 152, 255, 0.5);\n      -webkit-animation: showAddBlock ease 1s;\n              animation: showAddBlock ease 1s; }\n  .bg .form .data .form-group {\n        padding: .9em;\n        -webkit-animation: showAddBlock ease .5s;\n                animation: showAddBlock ease .5s; }\n  .bg .form .data .form-group select, .bg .form .data .form-group input {\n          color: aliceblue;\n          background: #7d8487; }\n  .bg .form .data .form-group h3 {\n          color: aliceblue; }\n  .bg .form .data .form-group .form-control {\n          width: 100%;\n          padding: .6em; }\n  .bg .form .data .form-group .form-control::-webkit-input-placeholder {\n            color: aliceblue; }\n  .bg .form .data .form-group .btn {\n          background: #7d8487;\n          box-shadow: inset 63px -49px 174px -37px rgba(21, 152, 255, 0.2); }\n  .bg .form .data .form-group .btn:hover {\n          background: rgba(0, 0, 0, 0.9);\n          box-shadow: inset 63px -49px 174px -37px rgba(21, 152, 255, 0.3);\n          color: wheat; }\n  .bg .form .data .form-group .info {\n          text-transform: uppercase;\n          color: aliceblue;\n          -webkit-animation: showAddBlock ease .5s;\n                  animation: showAddBlock ease .5s;\n          cursor: pointer; }\n  @-webkit-keyframes showAddBlock {\n  from {\n    opacity: 0;\n    -webkit-transform: scale(0.8);\n            transform: scale(0.8); }\n  to {\n    opacity: 1;\n    -webkit-transform: scale(1);\n            transform: scale(1); } }\n  @keyframes showAddBlock {\n  from {\n    opacity: 0;\n    -webkit-transform: scale(0.8);\n            transform: scale(0.8); }\n  to {\n    opacity: 1;\n    -webkit-transform: scale(1);\n            transform: scale(1); } }\n"
 
 /***/ }),
 
@@ -316,19 +319,10 @@ var AddStudentComponent = /** @class */ (function () {
         this.consultsSevice = consultsSevice;
         this.loading = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"]();
         this.close = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"]();
-        this.old = false;
-        this.groups = [
-            { 'id': '21231', 'name': 'asdas' },
-            { 'id': '21231', 'name': 'asdas' },
-            { 'id': '21231', 'name': 'asdas' },
-        ];
-        this.students = [
-            { 'id': '21231', 'name': 'asdas', 'surname': 'pet' },
-            { 'id': '21231', 'name': 'asdas', 'surname': 'pet' },
-            { 'id': '21231', 'name': 'asdas', 'surname': 'pet' },
-            { 'id': '21231', 'name': 'asdas', 'surname': 'pet' },
-            { 'id': '21231', 'name': 'asdas', 'surname': 'pet' },
-        ];
+        this.addStudent = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"]();
+        this.old = true;
+        this.groups = [];
+        this.students = [];
         this.newGroup = false;
         this.newStudentData = {
             name: '',
@@ -347,17 +341,17 @@ var AddStudentComponent = /** @class */ (function () {
             alert('add all fields');
             return;
         }
-        this.loading.emit(true);
         if (!this.newGroup) {
             this.consultsSevice.addStudentToGroup(this.newStudentData.name, this.newStudentData.surname, this.selectedGroupId).subscribe(function (res) {
                 console.log(res);
+                _this.addStudent.emit(true);
                 _this.closeWindow();
-                _this.loading.emit(false);
             });
         }
         else {
             this.consultsSevice.addStudentWithGroup(this.newStudentData.name, this.newStudentData.surname, this.newGroupName).subscribe(function (res) {
                 console.log(res);
+                _this.addStudent.emit(true);
                 _this.closeWindow();
                 _this.loading.emit(false);
             });
@@ -365,16 +359,54 @@ var AddStudentComponent = /** @class */ (function () {
     };
     AddStudentComponent.prototype.onLoadGroups = function () {
         var _this = this;
-        this.loading.emit(true);
         this.consultsSevice.getGroups()
             .subscribe(function (res) {
             console.log(res);
             _this.groups = res['groups'];
-            _this.loading.emit(false);
+            if (_this.groups.length > 0) {
+                _this.selectedGroupId = Number(_this.groups[0]['id']);
+                _this.onGroupChange();
+            }
+            else {
+                _this.selectedGroupId = -1;
+            }
+        });
+    };
+    AddStudentComponent.prototype.onGroupChange = function () {
+        var _this = this;
+        this.consultsSevice.getStudentInGroup(this.selectedGroupId)
+            .subscribe(function (res) {
+            console.log(res['students']);
+            _this.students = res['students'];
+            if (_this.students.length > 0) {
+                _this.selectedStudentId = Number(_this.students[0]['id']);
+            }
+            else {
+                _this.selectedStudentId = -1;
+            }
         });
     };
     AddStudentComponent.prototype.closeWindow = function () {
         this.close.emit(true);
+    };
+    AddStudentComponent.prototype.onAddExistStudent = function () {
+        var _this = this;
+        if (this.selectedStudentId === -1) {
+            alert('first join the student or addeted new student');
+            return;
+        }
+        this.loading.emit(true);
+        this.consultsSevice.addStudentInGroup(this.selectedStudentId)
+            .subscribe(function (res) {
+            _this.addStudent.emit(true);
+            console.log(res);
+            _this.loading.emit(false);
+            if (res['status'] !== 'ok') {
+                alert('only one student on this consult');
+                return;
+            }
+            _this.closeWindow();
+        });
     };
     __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"])(),
@@ -384,6 +416,10 @@ var AddStudentComponent = /** @class */ (function () {
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"])(),
         __metadata("design:type", Object)
     ], AddStudentComponent.prototype, "close", void 0);
+    __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"])(),
+        __metadata("design:type", Object)
+    ], AddStudentComponent.prototype, "addStudent", void 0);
     AddStudentComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
             selector: 'app-add-student',
@@ -406,7 +442,7 @@ var AddStudentComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<h2 class=\"content__h p-3\">consult</h2>\n\n<div class=\"panel\">\n    <div class=\"header\">\n        <h3 class=\"title\">{{time}}</h3>\n        <button class=\"btn\" (click)=\"onOpenConsult()\" *ngIf=\"!isOpen\">Start</button>\n        <button class=\"btn\" (click)=\"onAddSudent()\" *ngIf=\"isOpen\">addStudent</button>\n    </div>\n    <br>\n    <hr>\n    <div class=\"panel\">\n        <table>\n            <tr>\n                <th>Name</th>\n                <th>Group</th>\n                <th>Actions</th>\n            </tr>\n\n        </table>\n        <div class=\"right\">\n            <button class=\"btn\" *ngIf=\"isOpen\">close</button>\n        </div>\n    </div>\n</div>\n\n<app-loader [isVisible]=\"loading\"></app-loader>\n\n<app-add-student\n        (loading)=\"onLoadingChange($event)\"\n        (close)=\"addingStudent=false\"\n        *ngIf=\"addingStudent\"\n></app-add-student>"
+module.exports = "<h2 class=\"content__h p-3\">consult</h2>\n\n<div class=\"panel\">\n    <div class=\"header\">\n        <h3 class=\"title\">{{time}}</h3>\n        <button class=\"btn\" (click)=\"onOpenConsult()\" *ngIf=\"!isOpen\">Start</button>\n        <button class=\"btn\" (click)=\"onAddSudent()\" *ngIf=\"isOpen\">addStudent</button>\n    </div>\n    <br>\n    <hr>\n    <div class=\"panel\">\n\n        <div class=\"studentList none\" >\n            <span>Name</span><span>Group</span><span style=\"text-align: center\">Action</span>\n        </div>\n\n        <div class=\"list\" *ngIf=\"students\">\n            <div class=\"studentList\" *ngFor=\"let student of students\">\n                <div><span>{{student.name}} {{student.surname}}</span></div>\n                <div><span>{{student.group}}</span></div>\n                <div class=\"actions\">\n                    <span class=\"btn\" (click)=\"onDelStudent(student.id)\">del</span>\n                    <span class=\"btn\">view</span>\n                    <span class=\"btn\">edit</span>\n                </div>\n            </div>\n        </div>\n\n\n        <div class=\"right\">\n            <button class=\"btn\" *ngIf=\"isOpen\" (click)=\"onCloseConsult()\">close</button>\n        </div>\n    </div>\n</div>\n\n<app-loader [isVisible]=\"loading\"></app-loader>\n\n<app-add-student\n        (addStudent)=\"onUpdateStudentsList()\"\n        (loading)=\"onLoadingChange($event)\"\n        (close)=\"addingStudent=false\"\n        *ngIf=\"addingStudent\"\n\n></app-add-student>"
 
 /***/ }),
 
@@ -417,7 +453,7 @@ module.exports = "<h2 class=\"content__h p-3\">consult</h2>\n\n<div class=\"pane
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "h2 {\n  background: rgba(0, 0, 0, 0.5);\n  color: aliceblue; }\n\n.panel {\n  width: 85%;\n  background: rgba(0, 0, 0, 0.44);\n  color: aliceblue;\n  margin: 1em auto;\n  padding: 1em;\n  border-radius: .4em;\n  box-shadow: inset 63px -49px 174px -37px rgba(21, 152, 255, 0.5);\n  transition: all 1s;\n  -webkit-animation: showPanel ease 1s;\n          animation: showPanel ease 1s; }\n\n.panel .panel {\n    box-shadow: none;\n    -webkit-animation: showPanel cubic-bezier(0.42, 0, 0.58, 1) 1.5s;\n            animation: showPanel cubic-bezier(0.42, 0, 0.58, 1) 1.5s; }\n\n.panel .panel .right {\n      display: flex;\n      justify-content: flex-end;\n      padding-top: 2em;\n      -webkit-animation: showPanel ease-in-out 1.9s;\n              animation: showPanel ease-in-out 1.9s; }\n\n.panel .btn:hover {\n    background: #0d3349; }\n\n.panel:hover {\n    background: rgba(0, 0, 0, 0.4);\n    box-shadow: inset 63px -49px 174px -37px rgba(21, 152, 255, 0.3); }\n\n.panel .header {\n    display: flex;\n    justify-content: space-between;\n    align-items: center; }\n\n.panel table {\n    width: 100%;\n    border-radius: .4em;\n    box-shadow: 1px 1px rgba(255, 255, 255, 0.4);\n    padding: 1em; }\n\n@-webkit-keyframes showPanel {\n  from {\n    opacity: 0;\n    -webkit-transform: translateY(100%);\n            transform: translateY(100%); }\n  to {\n    opacity: 1;\n    -webkit-transform: translateY(0);\n            transform: translateY(0); } }\n\n@keyframes showPanel {\n  from {\n    opacity: 0;\n    -webkit-transform: translateY(100%);\n            transform: translateY(100%); }\n  to {\n    opacity: 1;\n    -webkit-transform: translateY(0);\n            transform: translateY(0); } }\n"
+module.exports = "h2 {\n  background: rgba(0, 0, 0, 0.5);\n  color: aliceblue; }\n\n.panel {\n  width: 85%;\n  background: rgba(0, 0, 0, 0.44);\n  color: aliceblue;\n  margin: 1em auto;\n  padding: 1em;\n  border-radius: .4em;\n  box-shadow: inset 63px -49px 174px -37px rgba(21, 152, 255, 0.5);\n  transition: all 1s;\n  -webkit-animation: showPanel ease 1s;\n          animation: showPanel ease 1s; }\n\n.panel .panel {\n    box-shadow: none;\n    -webkit-animation: showPanel cubic-bezier(0.42, 0, 0.58, 1) 1.5s;\n            animation: showPanel cubic-bezier(0.42, 0, 0.58, 1) 1.5s; }\n\n.panel .panel .right {\n      display: flex;\n      justify-content: flex-end;\n      padding-top: 2em;\n      -webkit-animation: showPanel ease-in-out 1.9s;\n              animation: showPanel ease-in-out 1.9s; }\n\n.panel .panel .studentList {\n      display: flex;\n      align-items: flex-end;\n      padding: .1em; }\n\n.panel .panel .studentList > * {\n        width: 33%;\n        padding-bottom: .2em;\n        box-shadow: inset 4px -10px 5px -8px #4c4d52; }\n\n.panel .panel .studentList .actions {\n        display: flex;\n        justify-content: space-around; }\n\n.panel .panel .none > * {\n      box-shadow: none; }\n\n.panel .btn:hover {\n    background: #0d3349; }\n\n.panel:hover {\n    background: rgba(0, 0, 0, 0.4);\n    box-shadow: inset 63px -49px 174px -37px rgba(21, 152, 255, 0.3); }\n\n.panel .header {\n    display: flex;\n    justify-content: space-between;\n    align-items: center; }\n\n.panel table {\n    width: 100%;\n    border-radius: .4em;\n    box-shadow: 1px 1px rgba(255, 255, 255, 0.4);\n    padding: 1em; }\n\n@-webkit-keyframes showPanel {\n  from {\n    opacity: 0;\n    -webkit-transform: translateY(100%);\n            transform: translateY(100%); }\n  to {\n    opacity: 1;\n    -webkit-transform: translateY(0);\n            transform: translateY(0); } }\n\n@keyframes showPanel {\n  from {\n    opacity: 0;\n    -webkit-transform: translateY(100%);\n            transform: translateY(100%); }\n  to {\n    opacity: 1;\n    -webkit-transform: translateY(0);\n            transform: translateY(0); } }\n"
 
 /***/ }),
 
@@ -453,26 +489,40 @@ var ConsultComponent = /** @class */ (function () {
         this.loading = true;
         this.isOpen = false;
         this.addingStudent = false;
+        this.students = [];
     }
     ConsultComponent.prototype.ngOnInit = function () {
-        this.onHasConsult();
+        this.init();
+        this.onGetStudentInConsult();
+        this.loading = false;
     };
-    ConsultComponent.prototype.onOpenConsult = function () {
-        this.consultServise.openConsult(this.date.getTime())
-            .subscribe(function (res) { return console.log(res); });
-    };
-    ConsultComponent.prototype.onHasConsult = function () {
+    ConsultComponent.prototype.init = function () {
         var _this = this;
         this.consultServise.hasOpenConsult()
             .subscribe(function (res) {
-            _this.loading = false;
-            console.log(res['consults'][0]['starttime']);
+            console.log(res);
             if (res['consults'].length > 0) {
                 _this.isOpen = true;
                 _this.date = new Date(parseInt(res['consults'][0]['starttime'], 10));
             }
+            else {
+                _this.isOpen = false;
+                _this.date = new Date();
+                _this.time = '';
+            }
             _this.time = _this.date.toLocaleString();
         });
+    };
+    ConsultComponent.prototype.onOpenConsult = function () {
+        var _this = this;
+        this.consultServise.openConsult(this.date.getTime())
+            .subscribe(function (res) {
+            console.log(res);
+            _this.init();
+        });
+    };
+    ConsultComponent.prototype.onUpdateStudentsList = function () {
+        this.onGetStudentInConsult();
     };
     ConsultComponent.prototype.onAddSudent = function () {
         this.addingStudent = true;
@@ -481,6 +531,31 @@ var ConsultComponent = /** @class */ (function () {
     ConsultComponent.prototype.onLoadingChange = function (loading) {
         this.loading = loading;
         this.cdRef.detectChanges();
+    };
+    ConsultComponent.prototype.onGetStudentInConsult = function () {
+        var _this = this;
+        this.consultServise.getStudentInConsult()
+            .subscribe(function (res) {
+            console.log(res['students']);
+            _this.students = res['students'];
+        });
+    };
+    ConsultComponent.prototype.onDelStudent = function (id) {
+        var _this = this;
+        this.consultServise.removeStudentFromConsult(id)
+            .subscribe(function (res) {
+            console.log(res);
+            _this.onUpdateStudentsList();
+        });
+    };
+    ConsultComponent.prototype.onCloseConsult = function () {
+        var _this = this;
+        this.consultServise.closeCurrentConsult()
+            .subscribe(function (res) {
+            console.log(res);
+            _this.isOpen = false;
+            _this.init();
+        });
     };
     ConsultComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
@@ -567,7 +642,7 @@ var HistoryComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container\">\n    <div class=\"leftbar\">\n        <app-menu></app-menu>\n    </div>\n    <div class=\"home\">\n        <router-outlet></router-outlet>\n    </div>\n</div>\n"
+module.exports = "<div class=\"container\" [class.colorCitrus]=\"citrus\">\n    <div class=\"leftbar\">\n        <app-menu (addColor)=\"citrus=!citrus\"></app-menu>\n    </div>\n    <div class=\"home\">\n        <router-outlet></router-outlet>\n    </div>\n</div>\n"
 
 /***/ }),
 
@@ -578,7 +653,7 @@ module.exports = "<div class=\"container\">\n    <div class=\"leftbar\">\n      
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".container {\n  width: 100%;\n  height: 100vh;\n  background: #283048;\n  /* fallback for old browsers */\n  /* Chrome 10-25, Safari 5.1-6 */\n  background: linear-gradient(to right, #859398, #283048);\n  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */\n  display: flex;\n  overflow: hidden;\n  -webkit-animation: showMain .6s ease-in;\n          animation: showMain .6s ease-in; }\n  .container .leftbar {\n    width: 15%;\n    height: 100%; }\n  .container .home {\n    height: 100%;\n    flex-grow: 1;\n    -webkit-animation: showHome ease-in 1s;\n            animation: showHome ease-in 1s; }\n  @-webkit-keyframes showMain {\n  from {\n    opacity: 0; }\n  to {\n    opacity: 1; } }\n  @keyframes showMain {\n  from {\n    opacity: 0; }\n  to {\n    opacity: 1; } }\n  @-webkit-keyframes showHome {\n  from {\n    -webkit-transform: translateX(100%);\n            transform: translateX(100%); }\n  to {\n    -webkit-transform: translateX(0);\n            transform: translateX(0); } }\n  @keyframes showHome {\n  from {\n    -webkit-transform: translateX(100%);\n            transform: translateX(100%); }\n  to {\n    -webkit-transform: translateX(0);\n            transform: translateX(0); } }\n"
+module.exports = ".container {\n  width: 100%;\n  height: 100%;\n  background: #283048;\n  /* fallback for old browsers */\n  /* Chrome 10-25, Safari 5.1-6 */\n  background: linear-gradient(to right, #859398, #283048);\n  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */\n  display: flex;\n  overflow: auto;\n  -webkit-animation: showMain .6s ease-in;\n          animation: showMain .6s ease-in; }\n  .container .leftbar {\n    width: 15%;\n    height: auto; }\n  .container .home {\n    height: 100%;\n    flex-grow: 1;\n    -webkit-animation: showHome ease-in 1s;\n            animation: showHome ease-in 1s; }\n  .container.colorCitrus {\n    background: #fc4a1a;\n    /* fallback for old browsers */\n    /* Chrome 10-25, Safari 5.1-6 */\n    background: linear-gradient(to right, #f7b733, #fc4a1a);\n    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */ }\n  @-webkit-keyframes showMain {\n  from {\n    opacity: 0; }\n  to {\n    opacity: 1; } }\n  @keyframes showMain {\n  from {\n    opacity: 0; }\n  to {\n    opacity: 1; } }\n  @-webkit-keyframes showHome {\n  from {\n    -webkit-transform: translateX(100%);\n            transform: translateX(100%); }\n  to {\n    -webkit-transform: translateX(0);\n            transform: translateX(0); } }\n  @keyframes showHome {\n  from {\n    -webkit-transform: translateX(100%);\n            transform: translateX(100%); }\n  to {\n    -webkit-transform: translateX(0);\n            transform: translateX(0); } }\n"
 
 /***/ }),
 
@@ -605,6 +680,7 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 var HomeComponent = /** @class */ (function () {
     function HomeComponent() {
+        this.citrus = false;
     }
     HomeComponent.prototype.ngOnInit = function () {
     };
@@ -697,7 +773,7 @@ var LoaderComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"menu\">\n    <h2 class=\"content__h p-3\">C <span>Sys</span></h2>\n    <ul>\n        <li><a routerLink=\"\" routerLinkActive=\"active\" [routerLinkActiveOptions]=\"{exact:true}\"><span>Consult</span></a></li>\n        <li><a routerLink=\"/history\" routerLinkActive=\"active\" [routerLinkActiveOptions]=\"{exact:true}\"><span>History</span></a></li>\n        <li><a (click)=\"onLogout()\"><span>logout</span></a></li>\n    </ul>\n</div>"
+module.exports = "<div class=\"menu\">\n    <h2 class=\"content__h p-3\">C <span>Sys</span></h2>\n    <ul>\n        <li><a routerLink=\"\" routerLinkActive=\"active\" [routerLinkActiveOptions]=\"{exact:true}\"><span>Consult</span></a></li>\n        <li><a routerLink=\"/history\" routerLinkActive=\"active\" [routerLinkActiveOptions]=\"{exact:true}\"><span>History</span></a></li>\n        <li><a (click)=\"onLogout()\"><span>logout</span></a></li>\n        <li><a (click)=\"onColor()\" >citrus</a></li>\n    </ul>\n</div>"
 
 /***/ }),
 
@@ -741,20 +817,25 @@ var MenuComponent = /** @class */ (function () {
     function MenuComponent(authServise, router) {
         this.authServise = authServise;
         this.router = router;
+        this.addColor = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"]();
     }
     MenuComponent.prototype.ngOnInit = function () {
     };
     MenuComponent.prototype.onLogout = function () {
         var _this = this;
-        if (!confirm('Are you want logout this...')) {
-            return;
-        }
         this.authServise.logout()
             .subscribe(function (res) {
             _this.authServise.clearToken();
             _this.router.navigate(['/auth']);
         });
     };
+    MenuComponent.prototype.onColor = function () {
+        this.addColor.emit(true);
+    };
+    __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"])(),
+        __metadata("design:type", Object)
+    ], MenuComponent.prototype, "addColor", void 0);
     MenuComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
             selector: 'app-menu',
@@ -774,13 +855,12 @@ var MenuComponent = /** @class */ (function () {
 /*!****************************************!*\
   !*** ./src/app/servises/auth.guard.ts ***!
   \****************************************/
-/*! exports provided: AuthGuard, NoAuthGuard */
+/*! exports provided: AuthGuard */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AuthGuard", function() { return AuthGuard; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NoAuthGuard", function() { return NoAuthGuard; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
 /* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs/operators */ "./node_modules/rxjs/_esm5/operators/index.js");
@@ -818,23 +898,6 @@ var AuthGuard = /** @class */ (function () {
         __metadata("design:paramtypes", [_angular_router__WEBPACK_IMPORTED_MODULE_1__["Router"], _auth_service__WEBPACK_IMPORTED_MODULE_3__["AuthService"]])
     ], AuthGuard);
     return AuthGuard;
-}());
-
-var NoAuthGuard = /** @class */ (function () {
-    function NoAuthGuard(router, authServise) {
-        this.router = router;
-        this.authServise = authServise;
-    }
-    NoAuthGuard.prototype.canActivate = function (route, state) {
-        var _this = this;
-        return this.authServise.isAuth()
-            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["tap"])(function (b) {
-            if (b) {
-                _this.router.navigate(['/']);
-            }
-        })).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["map"])(function (e) { return !e; }));
-    };
-    return NoAuthGuard;
 }());
 
 
@@ -933,9 +996,7 @@ var AuthService = /** @class */ (function () {
         this.router.navigate(['/auth']);
     };
     AuthService = __decorate([
-        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])({
-            providedIn: 'root'
-        }),
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])(),
         __metadata("design:paramtypes", [_angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpClient"], _angular_router__WEBPACK_IMPORTED_MODULE_5__["Router"]])
     ], AuthService);
     return AuthService;
@@ -1059,6 +1120,84 @@ var ConsultsService = /** @class */ (function () {
             }
         }));
     };
+    ConsultsService.prototype.getStudentInGroup = function (group_id) {
+        var _this = this;
+        var params = new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpParams"]()
+            .set('token', this.auth.getToken())
+            .set('group_id', group_id);
+        var headers = {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        };
+        return this.http.post(_utils_urls__WEBPACK_IMPORTED_MODULE_4__["Urls"].url('api/getGroupStudent'), params.toString(), {
+            headers: headers
+        }).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["tap"])(function (res) {
+            if (res['status'] !== 'ok') {
+                _this.auth.invalidSession();
+            }
+        }));
+    };
+    ConsultsService.prototype.addStudentInGroup = function (student_id) {
+        var _this = this;
+        var params = new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpParams"]()
+            .set('token', this.auth.getToken())
+            .set('student_id', student_id);
+        var headers = {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        };
+        return this.http.post(_utils_urls__WEBPACK_IMPORTED_MODULE_4__["Urls"].url('api/addExisttudent'), params.toString(), {
+            headers: headers
+        }).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["tap"])(function (res) {
+            if (res['status'] === 'auth_fail') {
+                _this.auth.invalidSession();
+            }
+        }));
+    };
+    ConsultsService.prototype.getStudentInConsult = function () {
+        var _this = this;
+        var params = new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpParams"]()
+            .set('token', this.auth.getToken());
+        var headers = {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        };
+        return this.http.post(_utils_urls__WEBPACK_IMPORTED_MODULE_4__["Urls"].url('api/getStudentInConsult'), params.toString(), {
+            headers: headers
+        }).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["tap"])(function (res) {
+            if (res['status'] === 'auth_fail') {
+                _this.auth.invalidSession();
+            }
+        }));
+    };
+    ConsultsService.prototype.removeStudentFromConsult = function (student_id) {
+        var _this = this;
+        var params = new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpParams"]()
+            .set('token', this.auth.getToken())
+            .set('student_id', student_id);
+        var headers = {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        };
+        return this.http.post(_utils_urls__WEBPACK_IMPORTED_MODULE_4__["Urls"].url('api/removeStudentFromConsult'), params.toString(), {
+            headers: headers
+        }).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["tap"])(function (res) {
+            if (res['status'] === 'auth_fail') {
+                _this.auth.invalidSession();
+            }
+        }));
+    };
+    ConsultsService.prototype.closeCurrentConsult = function () {
+        var _this = this;
+        var params = new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpParams"]()
+            .set('token', this.auth.getToken());
+        var headers = {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        };
+        return this.http.post(_utils_urls__WEBPACK_IMPORTED_MODULE_4__["Urls"].url('api/closeCurrentConsult'), params.toString(), {
+            headers: headers
+        }).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["tap"])(function (res) {
+            if (res['status'] === 'auth_fail') {
+                _this.auth.invalidSession();
+            }
+        }));
+    };
     ConsultsService = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])({
             providedIn: 'root'
@@ -1066,6 +1205,58 @@ var ConsultsService = /** @class */ (function () {
         __metadata("design:paramtypes", [_angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpClient"], _auth_service__WEBPACK_IMPORTED_MODULE_2__["AuthService"], _angular_router__WEBPACK_IMPORTED_MODULE_5__["Router"]])
     ], ConsultsService);
     return ConsultsService;
+}());
+
+
+
+/***/ }),
+
+/***/ "./src/app/servises/no-auth.guard.ts":
+/*!*******************************************!*\
+  !*** ./src/app/servises/no-auth.guard.ts ***!
+  \*******************************************/
+/*! exports provided: NoAuthGuard */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NoAuthGuard", function() { return NoAuthGuard; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs/operators */ "./node_modules/rxjs/_esm5/operators/index.js");
+/* harmony import */ var _auth_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./auth.service */ "./src/app/servises/auth.service.ts");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (undefined && undefined.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+
+
+var NoAuthGuard = /** @class */ (function () {
+    function NoAuthGuard(router, authServise) {
+        this.router = router;
+        this.authServise = authServise;
+    }
+    NoAuthGuard.prototype.canActivate = function (route, state) {
+        var _this = this;
+        return this.authServise.isAuth()
+            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["tap"])(function (b) {
+            if (b) {
+                _this.router.navigate(['/']);
+            }
+        })).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["map"])(function (e) { return !e; }));
+    };
+    NoAuthGuard = __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])(),
+        __metadata("design:paramtypes", [_angular_router__WEBPACK_IMPORTED_MODULE_1__["Router"], _auth_service__WEBPACK_IMPORTED_MODULE_3__["AuthService"]])
+    ], NoAuthGuard);
+    return NoAuthGuard;
 }());
 
 
