@@ -135,7 +135,7 @@ var homeChildren = [
 ];
 var routes = [
     { path: '', component: _home_home_component__WEBPACK_IMPORTED_MODULE_6__["HomeComponent"], canActivate: [_servises_auth_guard__WEBPACK_IMPORTED_MODULE_7__["AuthGuard"]], children: homeChildren },
-    { path: 'auth', component: _auth_auth_component__WEBPACK_IMPORTED_MODULE_5__["AuthComponent"], canActivate: [_servises_no_auth_guard__WEBPACK_IMPORTED_MODULE_15__["NoAuthGuard"]] },
+    { path: 'auth', component: _auth_auth_component__WEBPACK_IMPORTED_MODULE_5__["AuthComponent"] },
 ];
 var AppModule = /** @class */ (function () {
     function AppModule() {
