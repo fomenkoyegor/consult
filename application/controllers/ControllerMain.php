@@ -18,10 +18,10 @@ class ControllerMain extends Controller
     public function action_index()
     {
 
-//        $view = new View("main");
-////        $view->useTemplate();
-////        $this->response($view);
-        echo "re";
+        $view = new View("main");
+        $view->useTemplate();
+        $this->response($view);
+
 
     }
 
