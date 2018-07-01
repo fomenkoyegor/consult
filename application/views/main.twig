@@ -1,43 +1,42 @@
-{#{% extends 'app.twig' %}#}
-{#{% block head %}#}
-    {#<meta charset="utf-8">#}
-    {#<title>Ngarturapi</title>#}
-    {#<base href="/">#}
-    {#<meta name="viewport" content="width=device-width, initial-scale=1">#}
-    {#<link rel="icon" type="image/x-icon" href="/media/ng/favicon.ico">#}
-{#{% endblock %}#}
-{#{% block body %}#}
-{#<app-root>#}
-    {#<div class="holder">#}
-        {#<div class="flip-preloader example-1">#}
-            {#<div></div>#}
-            {#<div></div>#}
-            {#<div></div>#}
-            {#<div></div>#}
-            {#<div></div>#}
-        {#</div>#}
-        {#<div class="flip-preloader example-2">#}
-            {#<div></div>#}
-            {#<div></div>#}
-            {#<div></div>#}
-            {#<div></div>#}
-            {#<div></div>#}
-        {#</div>#}
-        {#<div class="flip-preloader example-3">#}
-            {#<div></div>#}
-            {#<div></div>#}
-            {#<div></div>#}
-            {#<div></div>#}
-            {#<div></div>#}
-        {#</div>#}
-    {#</div>#}
-{#</app-root>#}
-{#{% endblock %}#}
-{#{% block scripts %}#}
-{#<script type="text/javascript" src="/media/ng/runtime.js"></script>#}
-{#<script type="text/javascript" src="/media/ng/polyfills.js"></script>#}
-{#<script type="text/javascript" src="/media/ng/styles.js"></script>#}
-{#<script type="text/javascript" src="/media/ng/vendor.js"></script>#}
-{#<script type="text/javascript" src="/media/ng/main.js"></script>#}
-{#{% endblock %}#}
-<h1>heroku</h1>
+{% extends 'app.twig' %}
+{% block head %}
+    <meta charset="utf-8">
+    <title>Ngarturapi</title>
+    <base href="/">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="/media/ng/favicon.ico">
+{% endblock %}
+{% block body %}
+    <app-root>
+        <div class="holder">
+            <div class="flip-preloader example-1">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <div class="flip-preloader example-2">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <div class="flip-preloader example-3">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </app-root>
+{% endblock %}
+{% block scripts %}
+    <script type="text/javascript" src="/media/ng/runtime.js"></script>
+    <script type="text/javascript" src="/media/ng/polyfills.js"></script>
+    <script type="text/javascript" src="/media/ng/styles.js"></script>
+    <script type="text/javascript" src="/media/ng/vendor.js"></script>
+    <script type="text/javascript" src="/media/ng/main.js"></script>
+{% endblock %}
